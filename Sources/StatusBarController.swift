@@ -46,22 +46,32 @@ final class StatusBarController {
 
     private func makeIcon(for value: Int) -> NSImage? {
         let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .regular)
-        guard let symbol = NSImage(systemSymbolName: "brain.head.profile", accessibilityDescription: "Brain Battery")?
-            .withSymbolConfiguration(config)
+        guard let outlineSymbol = NSImage(systemSymbolName: "brain", accessibilityDescription: "Brain Battery")?.withSymbolConfiguration(config),
+              let fillSymbol = NSImage(systemSymbolName: "brain.fill", accessibilityDescription: nil)?.withSymbolConfiguration(config)
         else {
             return nil
         }
 
-        let image = NSImage(size: symbol.size)
+        let size = outlineSymbol.size
+        let image = NSImage(size: size)
         image.lockFocus()
+        let rect = NSRect(origin: .zero, size: size)
 
-        let rect = NSRect(origin: .zero, size: symbol.size)
-        symbol.draw(in: rect)
-
+        // 1. Draw the fill symbol first, clipped to percentage
         let fillHeight = rect.height * CGFloat(max(0, min(value, 100))) / 100
-        let fillRect = NSRect(x: 0, y: 0, width: rect.width, height: fillHeight)
-        NSColor.controlAccentColor.setFill()
-        fillRect.fill(using: .sourceAtop)
+        if fillHeight > 0 {
+            let fillRect = NSRect(x: 0, y: 0, width: rect.width, height: fillHeight)
+            let context = NSGraphicsContext.current?.cgContext
+            context?.saveGState()
+            context?.clip(to: fillRect)
+            NSColor.white.setFill()
+            fillSymbol.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
+            context?.restoreGState()
+        }
+
+        // 2. Draw the outline symbol fully in white on top
+        NSColor.white.setFill()
+        outlineSymbol.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
 
         image.unlockFocus()
         image.isTemplate = false
