@@ -57,21 +57,23 @@ final class StatusBarController {
         image.lockFocus()
         let rect = NSRect(origin: .zero, size: size)
 
-        // 1. Draw the fill symbol first, clipped to percentage
+        // 1. Draw the fill portion's mask, then fill it with white using sourceIn
         let fillHeight = rect.height * CGFloat(max(0, min(value, 100))) / 100
         if fillHeight > 0 {
             let fillRect = NSRect(x: 0, y: 0, width: rect.width, height: fillHeight)
             let context = NSGraphicsContext.current?.cgContext
             context?.saveGState()
             context?.clip(to: fillRect)
-            NSColor.white.setFill()
-            fillSymbol.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
+            fillSymbol.draw(in: rect, from: NSRect.zero, operation: NSCompositingOperation.sourceOver, fraction: 1.0)
+            NSColor.white.set()
+            rect.fill(using: .sourceIn)
             context?.restoreGState()
         }
 
-        // 2. Draw the outline symbol fully in white on top
-        NSColor.white.setFill()
-        outlineSymbol.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
+        // 2. Draw the outline portion's mask over the whole area, then fill with white using sourceIn
+        outlineSymbol.draw(in: rect, from: NSRect.zero, operation: NSCompositingOperation.sourceOver, fraction: 1.0)
+        NSColor.white.set()
+        rect.fill(using: .sourceIn)
 
         image.unlockFocus()
         image.isTemplate = false
