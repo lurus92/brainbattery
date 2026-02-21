@@ -11,8 +11,9 @@ final class BrainBatteryViewModel: ObservableObject {
 
     init(logger: Logger = Logger()) {
         self.logger = logger
-        entries = logger.loadEntries().sorted { $0.timestamp < $1.timestamp }
-        currentValue = Double(entries.last?.value ?? 50)
+        let initialEntries = logger.loadEntries().sorted { $0.timestamp < $1.timestamp }
+        entries = initialEntries
+        currentValue = Double(initialEntries.last?.value ?? 50)
     }
 
     func update(value: Double) {
@@ -47,6 +48,6 @@ final class BrainBatteryViewModel: ObservableObject {
 
 private extension Int {
     func clamped(to range: ClosedRange<Int>) -> Int {
-        min(max(self, range.lowerBound), range.upperBound)
+        Swift.min(Swift.max(self, range.lowerBound), range.upperBound)
     }
 }
