@@ -4,7 +4,7 @@ struct PopoverView: View {
     @ObservedObject var viewModel: BrainBatteryViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .center, spacing: 12) {
             Text("\(Int(viewModel.currentValue))%")
                 .font(.system(size: 36, weight: .bold, design: .rounded))
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -21,7 +21,7 @@ struct PopoverView: View {
                 viewModel.update(value: viewModel.currentValue)
             }
             .buttonStyle(.borderedProminent)
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .frame(maxWidth: .infinity, alignment: .center)
 
             Divider()
 
@@ -32,6 +32,6 @@ struct PopoverView: View {
             HeatmapView(hourlyAverages: viewModel.hourlyAveragesLast7Days())
         }
         .padding(16)
-        .frame(width: 320)
+        .frame(width: 380)
     }
 }
