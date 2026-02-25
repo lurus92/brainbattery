@@ -1,5 +1,7 @@
 # 🧠 Brain Battery – macOS Menu Bar App
 
+![UI of the widget![Alt text](/path/to/img.jpg)](/screen.png)
+
 ## Overview
 
 Brain Battery is a minimal macOS menu bar application that:
