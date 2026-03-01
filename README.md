@@ -41,12 +41,12 @@ The popover contains:
 
 * Current percentage (large text, e.g. `72%`)
 * A slider (0–100)
-* An "Update" button (or auto-save on slider release)
+* An **Update** button to submit changes
 
-When the value changes:
+When the user clicks **Update**:
 
-* It is immediately saved
-* It is logged with a timestamp
+* The latest slider value is saved
+* A timestamped log entry is appended
 
 ---
 
@@ -104,9 +104,11 @@ Keep it simple:
 * No date filters
 * Just show today OR last 7 days averaged
 
-Start with:
+Includes:
 
-> Last 7 days averaged per hour
+* **Today view** with a per-hour line graph
+* Day navigation (`<` and `>`) to inspect previous days
+* Existing 7-day hourly average heatmap for context
 
 ---
 
@@ -189,18 +191,22 @@ Simplest approach preferred.
 
 ## 💾 Persistence
 
-Simplest approach:
-
-Use a local JSON file:
+Current strategy: single local JSON log file at `~/Library/Application Support/BrainBattery/log.json`.
 
 ```swift
 func loadEntries() -> [BrainEntry]
 func saveEntries(_ entries: [BrainEntry])
 ```
 
-Append new entries.
+### Why this is the best fit right now
 
-Keep everything in memory while running.
+* Transparent and easy to inspect/debug.
+* No migration or schema management overhead.
+* Works offline and avoids external dependencies.
+
+### When to evolve it
+
+If logs become large (for example, years of data), switch to a rolling storage strategy (daily/monthly JSON files) or SQLite while keeping the same `BrainEntry` shape.
 
 ---
 

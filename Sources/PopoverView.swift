@@ -5,23 +5,51 @@ struct PopoverView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
-            Text("\(Int(viewModel.currentValue))%")
+            Text("\(Int(viewModel.draftValue))%")
                 .font(.system(size: 36, weight: .bold, design: .rounded))
                 .frame(maxWidth: .infinity, alignment: .center)
 
-            Slider(value: $viewModel.currentValue, in: 0...100, step: 1) {
+            Slider(value: $viewModel.draftValue, in: 0...100, step: 1) {
                 Text("Brain Energy")
-            } onEditingChanged: { editing in
-                if !editing {
-                    viewModel.update(value: viewModel.currentValue)
-                }
             }
 
             Button("Update") {
-                viewModel.update(value: viewModel.currentValue)
+                viewModel.updateDraftValue()
             }
             .buttonStyle(.borderedProminent)
             .frame(maxWidth: .infinity, alignment: .center)
+
+            Divider()
+
+            VStack(spacing: 8) {
+                Text("Today")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                HStack {
+                    Button {
+                        viewModel.showPreviousDay()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+
+                    Spacer()
+
+                    Text(viewModel.selectedDayTitle)
+                        .font(.subheadline.weight(.medium))
+
+                    Spacer()
+
+                    Button {
+                        viewModel.showNextDay()
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .disabled(!viewModel.canShowNextDay)
+                }
+
+                DayGraphView(hourlyLevels: viewModel.hourlyLevelsForSelectedDay())
+            }
 
             Divider()
 
